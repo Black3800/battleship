@@ -24,7 +24,7 @@
             border: 0.5px solid rgb(153, 185, 255);
             border-collapse: collapse;
             text-align: center;
-            transition: all 0.1s ease-in;
+            transition: all 0.1s ease-out;
         }
 
         td.board-coord-identifier
@@ -80,23 +80,23 @@
                             <div class="form-group row p-2">
                                 <label for="input-board-size" class="col-sm-2 col-form-label">Board size:</label>
                                 <div class="col-sm-10">
-                                    <input type="number" id="input-board-size" class="form-control" value="10"/>
+                                    <input type="number" id="input-board-size" class="form-control" value="10" min="1"/>
                                 </div>
                             </div>
                             <div class="form-group row p-2">
                                 <label for="input-ship-count" class="col-sm-2 col-form-label">Ship count:</label>
                                 <div class="col-sm-10">
-                                    <input type="number" id="input-ship-count" class="form-control" value="10"/>
+                                    <input type="number" id="input-ship-count" class="form-control" value="12" min="1"/>
                                 </div>
                             </div>
                             <div class="form-group row p-2">
                                 <label for="input-min-ship-size" class="col-sm-2 col-form-label">Min ship size:</label>
                                 <div class="col-sm-4">
-                                    <input type="number" id="input-min-ship-size" class="form-control" value="2"/>
+                                    <input type="number" id="input-min-ship-size" class="form-control" value="2" min="1" max="4"/>
                                 </div>
                                 <label for="input-max-ship-size" class="col-sm-2 col-form-label">Max ship size:</label>
                                 <div class="col-sm-4">
-                                    <input type="number" id="input-max-ship-size" class="form-control" value="4"/>
+                                    <input type="number" id="input-max-ship-size" class="form-control" value="4" min="2" max="10"/>
                                 </div>
                             </div>
                             <div class="form-group row p-2">
@@ -157,9 +157,37 @@
     <script>
         let g = new Battleship()
 
+        document.getElementById('input-board-size').addEventListener('change', () => {
+            let newSize = parseInt(document.getElementById('input-board-size').value)
+            document.getElementById('input-max-ship-size').setAttribute('max', newSize)
+            if(parseInt(document.getElementById('input-max-ship-size').value) > newSize)
+            {
+                document.getElementById('input-max-ship-size').value = newSize
+            }
+        })
+
+        document.getElementById('input-min-ship-size').addEventListener('change', () => {
+            let newSize = parseInt(document.getElementById('input-min-ship-size').value)
+            document.getElementById('input-max-ship-size').setAttribute('min', newSize)
+            if(parseInt(document.getElementById('input-max-ship-size').value) < newSize)
+            {
+                document.getElementById('input-max-ship-size').value = newSize
+            }
+        })
+
+        document.getElementById('input-max-ship-size').addEventListener('change', () => {
+            let newSize = parseInt(document.getElementById('input-max-ship-size').value)
+            document.getElementById('input-min-ship-size').setAttribute('max', newSize)
+            if(parseInt(document.getElementById('input-min-ship-size').value) > newSize)
+            {
+                document.getElementById('input-min-ship-size').value = newSize
+            }
+        })
+
         document.getElementById('initialize-btn').addEventListener('click', () => {
             g.initialize({
                 table: document.getElementById('board-table'),
+                banner: document.getElementById('board-banner'),
                 size: parseInt(document.getElementById('input-board-size').value),
                 shipCount: parseInt(document.getElementById('input-ship-count').value),
                 shipSize: g.generateRange(
